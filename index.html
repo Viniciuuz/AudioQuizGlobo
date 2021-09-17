@@ -4,13 +4,66 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Áudios Call of Duty</title>
+    <title>Áudios Globo</title>
 
     <link rel="stylesheet" href="css/halfmoon.min.css">
     <script src="css/halfmoon.min.js"></script>
     <script src="https://kit.fontawesome.com/d064bda31b.js" crossorigin="anonymous"></script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script src="programas.js"></script>
+
+    <script>
+        function shuffle(array) {
+            var currentIndex = array.length,  randomIndex;
+
+            while (currentIndex != 0) {
+
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+
+            }
+
+            return array;
+        }
+    </script>
+
+    <script>
+        var utf8_to_latin1 = function (s) {
+            return unescape(encodeURIComponent(s));
+        };
+        var latin1_to_utf8 = function (s) {
+            return decodeURIComponent(escape(s));
+        };
+
+        var audios = []
+
+        $.each(programas, function(i, item) {
+            var val = latin1_to_utf8(item)
+            audios.push(val)
+        });
+
+        shuffle(audios)
+    </script>
+
+    
+
+    <script>
+        $(function() {
+			$(".guess").autocomplete({
+				source: audios, 
+				minLength: 1,
+			});
+
+		});
+
+    </script>
 
     <style>
         .container {
@@ -48,25 +101,7 @@
         }
     </style>
 
-    <script src="audios.js"></script>
-
     <script>
-
-        function shuffle(array) {
-            var currentIndex = array.length,  randomIndex;
-
-            while (currentIndex != 0) {
-
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-
-                [array[currentIndex], array[randomIndex]] = [
-                array[randomIndex], array[currentIndex]];
-
-            }
-
-            return array;
-        }
 
         function audio(url) {
             new Audio(url).play();
@@ -76,7 +111,7 @@
 </head>
 <body class="dark-mode">
 
-    <h1 style="text-align: center;">Áudios Call of Duty</h1>
+    <h1 style="text-align: center;">Áudios Globo</h1>
     <h3 style="text-align: center;">Total de áudios: <span id="TotalAudios"></span></h3>
 
     <div class="container" id="container-acertos" style="display: none;">
@@ -85,13 +120,13 @@
         </div>
     </div>
 
-    <div class="container" id="mainDiv">
-
+    <div class="container" id="main-container">
+        
     </div>
 
     <div id="buttons" style="text-align: center;">
         <button class="btn btn-primary" style="margin-top: 20px;" type="button" onclick="check()">Checar Respostas</button>
-        <button class="btn btn-primary" id="respostas" style="margin-top: 20px;" type="button" disabled onclick="$('.resposta').show('slow')">Revelar Respostas</button>
+        <button class="btn btn-primary" style="margin-top: 20px;" type="button" onclick="$('.resposta').show()" disabled>Revelar Respostas</button>
     </div>
 
     <footer>
@@ -99,61 +134,42 @@
         Criado Por: <a href="https://github.com/Viniciuuz" target="_blank" rel="noopener noreferrer">Viniciuuz</a>
     </footer>
 
+
     <script>
-        shuffle(audios)
-        var div = document.getElementById('mainDiv');
-        for (var i = 0; i < audios.length; i++) {
+        var div = $("#main-container")
+        $.each(audios, function(index, item) {
+            div.append(`<div class="gallery shadow-lg">
+                            <button class="btn btn-primary audio-interact" style="margin-bottom: 5px;" type="button" item="${index}" onclick="audio('audios/${item}.mp3')">Tocar</button>
+                            <input type="text" class="form-control guess">
+                            <span class="resposta" style="display: none;">Resposta: ${item}</span>
+                        </div>`)
+        });
 
-            div.innerHTML += `<div class="gallery shadow-lg">
-                                <button class="btn btn-primary audio-interact" style="margin-bottom: 5px;" type="button" item="${i}" onclick="audio('${audios[i].url}')">Tocar</button>
-                                <select class="form-control guess" item="${i}">
-                                    <option value="" selected="selected" disabled="disabled">Selecione</option>
-                                    <option value="aw">Advanced Warfare</option>
-                                    <option value="bo1">Black Ops 1</option>
-                                    <option value="bo2">Black Ops 2</option>
-                                    <option value="bo3">Black Ops 3</option>
-                                    <option value="bo4">Black Ops 4</option>
-                                    <option value="cod4">Call Of Duty 4 (MW)</option>
-                                    <option value="mw2019">Modern Warfare (2019)</option>
-                                    <option value="mw2">Modern Warfare 2</option>
-                                    <option value="mw3">Modern Warfare 3</option>
-                                    <option value="waw">World At War</option>
-                                    <option value="ww2">Call Of Duty WWII</option>
-                                </select>
-                                <span class="resposta" style="display: none;">Resposta: ${audios[i].name}</span>
-                              </div>`;
-        }
-        
-        document.getElementById('TotalAudios').innerHTML = audios.length
-
-        console.log(audios)
-
+        $("#TotalAudios").html(programas.length)
     </script>
 
     <script>
-        function check(){
-            var x = document.getElementsByClassName("guess");
-            var acertos = 0
-            for (var i = 0; i < x.length; i++) {
-                var select = x[i];
-                var value = select.options[select.selectedIndex].value;
 
-                if(x[i].value == audios[x[i].getAttribute("item")].name){
+        function check(){
+            var x = $(".guess")
+            var acertos = 0
+            $.each(x, function(i, item) {
+
+                if(x[i].value == audios[i]){
                     x[i].style.color = "green";
                     acertos++
                 }else{
                     x[i].style.color = "red";
                 }
-            }
 
-            document.getElementById("respostas").disabled = false;
-            document.getElementById('acertos').innerHTML = acertos
-            $('#container-acertos').show()
-            document.getElementById("container-acertos").scrollIntoView({behavior: 'smooth'});
+            });
 
-            if(acertos == audios.length){
-                document.getElementById('acertos').innerHTML += '<img src="img/jj.png" width="30px" />'
-            }
+            $(".resposta").show()
+            $("#acertos").html(acertos)
+            $("#container-acertos").show()
+            $('.btn').prop('disabled', false);
+            document.getElementById("container-acertos").scrollIntoView();
+
         }
     </script>
 </body>
