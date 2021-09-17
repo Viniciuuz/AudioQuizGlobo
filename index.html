@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Áudios Call of Duty</title>
+
+    <link rel="stylesheet" href="css/halfmoon.min.css">
+    <script src="css/halfmoon.min.js"></script>
+    <script src="https://kit.fontawesome.com/d064bda31b.js" crossorigin="anonymous"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 70%;
+            margin: 10px auto;
+            position: relative;
+            text-align:center;
+        }
+
+        div.gallery {
+            margin: 5px;
+            float: left;
+            width: 300px;
+            padding: 10px;
+        }
+
+        div.gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        #buttons {
+            margin-bottom: 20px;
+        }
+
+        footer {
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+
+    <script src="audios.js"></script>
+
+    <script>
+
+        function shuffle(array) {
+            var currentIndex = array.length,  randomIndex;
+
+            while (currentIndex != 0) {
+
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+
+                [array[currentIndex], array[randomIndex]] = [
+                array[randomIndex], array[currentIndex]];
+
+            }
+
+            return array;
+        }
+
+        function audio(url) {
+            new Audio(url).play();
+        }
+    </script>
+
+</head>
+<body class="dark-mode">
+
+    <h1 style="text-align: center;">Áudios Call of Duty</h1>
+    <h3 style="text-align: center;">Total de áudios: <span id="TotalAudios"></span></h3>
+
+    <div class="container" id="container-acertos" style="display: none;">
+        <div class="alert alert-success filled-dm" role="alert">
+            <h4 class="alert-heading">Você acertou <span id="acertos"></span></span></h4>
+        </div>
+    </div>
+
+    <div class="container" id="mainDiv">
+
+    </div>
+
+    <div id="buttons" style="text-align: center;">
+        <button class="btn btn-primary" style="margin-top: 20px;" type="button" onclick="check()">Checar Respostas</button>
+        <button class="btn btn-primary" id="respostas" style="margin-top: 20px;" type="button" disabled onclick="$('.resposta').show('slow')">Revelar Respostas</button>
+    </div>
+
+    <footer>
+        Ideia de: <a href="https://www.twitch.tv/jefff" target="_blank" rel="noopener noreferrer">JeFFF</a> <br>
+        Criado Por: <a href="https://github.com/Viniciuuz" target="_blank" rel="noopener noreferrer">Viniciuuz</a>
+    </footer>
+
+    <script>
+        shuffle(audios)
+        var div = document.getElementById('mainDiv');
+        for (var i = 0; i < audios.length; i++) {
+
+            div.innerHTML += `<div class="gallery shadow-lg">
+                                <button class="btn btn-primary audio-interact" style="margin-bottom: 5px;" type="button" item="${i}" onclick="audio('${audios[i].url}')">Tocar</button>
+                                <select class="form-control guess" item="${i}">
+                                    <option value="" selected="selected" disabled="disabled">Selecione</option>
+                                    <option value="aw">Advanced Warfare</option>
+                                    <option value="bo1">Black Ops 1</option>
+                                    <option value="bo2">Black Ops 2</option>
+                                    <option value="bo3">Black Ops 3</option>
+                                    <option value="bo4">Black Ops 4</option>
+                                    <option value="cod4">Call Of Duty 4 (MW)</option>
+                                    <option value="mw2019">Modern Warfare (2019)</option>
+                                    <option value="mw2">Modern Warfare 2</option>
+                                    <option value="mw3">Modern Warfare 3</option>
+                                    <option value="waw">World At War</option>
+                                    <option value="ww2">Call Of Duty WWII</option>
+                                </select>
+                                <span class="resposta" style="display: none;">Resposta: ${audios[i].name}</span>
+                              </div>`;
+        }
+        
+        document.getElementById('TotalAudios').innerHTML = audios.length
+
+        console.log(audios)
+
+    </script>
+
+    <script>
+        function check(){
+            var x = document.getElementsByClassName("guess");
+            var acertos = 0
+            for (var i = 0; i < x.length; i++) {
+                var select = x[i];
+                var value = select.options[select.selectedIndex].value;
+
+                if(x[i].value == audios[x[i].getAttribute("item")].name){
+                    x[i].style.color = "green";
+                    acertos++
+                }else{
+                    x[i].style.color = "red";
+                }
+            }
+
+            document.getElementById("respostas").disabled = false;
+            document.getElementById('acertos').innerHTML = acertos
+            $('#container-acertos').show()
+            document.getElementById("container-acertos").scrollIntoView({behavior: 'smooth'});
+
+            if(acertos == audios.length){
+                document.getElementById('acertos').innerHTML += '<img src="img/jj.png" width="30px" />'
+            }
+        }
+    </script>
+</body>
+</html>
